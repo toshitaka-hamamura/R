@@ -1,0 +1,22 @@
+#----cronbach_alpha----#
+library(psych)
+
+alpha(df[,c("ae1", "ae3", "ae5", "ae8", "ae10", "ae11", "ae12", "ae15", "ae17", "ae19")])
+alpha(df[,c("ae2", "ae4", "ae6", "ae7", "ae9", "ae13", "ae14", "ae16", "ae18", "ae20")])
+alpha(df[,c("audit1", "audit2", "audit3", "audit4", "audit5", "audit6", "audit7", "audit8", "audit9", "audit10")][which(df$time_response==1),])
+alpha(df[,c("audit1", "audit2", "audit3", "audit4", "audit5", "audit6", "audit7", "audit8", "audit9", "audit10")][which(df$time_response==2),])
+alpha(df[,c("audit1", "audit2", "audit3", "audit4", "audit5", "audit6", "audit7", "audit8", "audit9", "audit10")][which(df$time_response==3),])
+alpha(df[,c("audit1", "audit2", "audit3", "audit4", "audit5", "audit6", "audit7", "audit8", "audit9", "audit10")][which(df$time_response==4),])
+alpha(df[,c("ddq_mon", "ddq_tue", "ddq_wed", "ddq_thu", "ddq_fri", "ddq_sat", "ddq_sun")][which(df$time_response==1),])
+alpha(df[,c("ddq_mon", "ddq_tue", "ddq_wed", "ddq_thu", "ddq_fri", "ddq_sat", "ddq_sun")][which(df$time_response==2),])
+alpha(df[,c("ddq_mon", "ddq_tue", "ddq_wed", "ddq_thu", "ddq_fri", "ddq_sat", "ddq_sun")][which(df$time_response==3),])
+alpha(df[,c("ddq_mon", "ddq_tue", "ddq_wed", "ddq_thu", "ddq_fri", "ddq_sat", "ddq_sun")][which(df$time_response==4),])
+alpha(df[,c("ddf_mon", "ddf_tue", "ddf_wed", "ddf_thu", "ddf_fri", "ddf_sat", "ddf_sun")][which(df$time_response==1),])
+alpha(df[,c("ddf_mon", "ddf_tue", "ddf_wed", "ddf_thu", "ddf_fri", "ddf_sat", "ddf_sun")][which(df$time_response==2),])
+alpha(df[,c("ddf_mon", "ddf_tue", "ddf_wed", "ddf_thu", "ddf_fri", "ddf_sat", "ddf_sun")][which(df$time_response==3),])
+alpha(df[,c("ddf_mon", "ddf_tue", "ddf_wed", "ddf_thu", "ddf_fri", "ddf_sat", "ddf_sun")][which(df$time_response==4),])
+
+alpha(df[,c("consq_rltnshp", "consq_health", "consq_satisf", "consq_famly", "consq_work", "consq_finance")][which(df$time_response==1),])
+alpha(df[,c("consq_rltnshp", "consq_health", "consq_satisf", "consq_famly", "consq_work", "consq_finance")][which(df$time_response==2),])
+alpha(df[,c("consq_rltnshp", "consq_health", "consq_satisf", "consq_famly", "consq_work", "consq_finance")][which(df$time_response==3),])
+alpha(df[,c("consq_rltnshp", "consq_health", "consq_satisf", "consq_famly", "consq_work", "consq_finance")][which(df$time_response==4),])

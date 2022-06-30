@@ -1,0 +1,389 @@
+require(MCMCpack)#
+require(coda)#
+require (BMA)
+datafile <- read.csv(file.choose(),header=T)#
+datafile9 <- subset(datafile, select=c(RCOMB1, GENDER, NATIVE,  SLANG,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT))#
+head(datafile9)#
+nrow(datafile9)#
+datafile9<-na.omit(datafile9)#
+nrow(datafile9)
+datafile9 <- subset(datafile, select=c(rcomb1, gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT))#
+head(datafile9)#
+nrow(datafile9)#
+datafile9<-na.omit(datafile9)#
+nrow(datafile9)
+FullModel <- MCMCregress(rcomb1~gender+native+ slang+ESCS+#
+       JOYREAD+ DIVREAD+ MEMOR+ ELAB+ CSTRAT,#
+       data=datafile9,burnin=5000,mcmc=100000,thin=10,b0=0,B0=0)#
+plot(FullModel)#
+autocorr.plot(FullModel)#
+dev.off()#
+summary(FullModel)
+summary(FullModel)
+FullModel_inf <- MCMCregress(rcomb1~gender+native+ slang+  ESCS+#
+       JOYREAD+ DIVREAD+ MEMOR+ ELAB+ CSTRAT,data=datafile9,#
+       marginal.likelihood="Chib95",mcmc=10000,#
+b0=c(491.2, 12.9, 3.4, 21.4, 32.6, 22.9, 0.01, -18.6, -11.1, 22.8),#
+B0=c(0.0173, 0.0932, 0.0141, 0.0216, 0.3354, 0.3210, 0.3245, 0.2101, 0.2111, 0.1707))#
+#
+pdf('FullModel_inf.trace.pdf')#
+plot(FullModel_inf) # Produces the convergence plots and the posterior densities#
+pdf('FullModel_inf.acf.pdf')#
+autocorr.plot(FullModel_inf)#
+dev.off()#
+summary(FullModel_inf)#
+#
+geweke.diag(FullModel_inf, frac1=0.1, frac2=0.5) #
+heidel.diag(FullModel_inf,eps=0.1,pvalue=0.05)  #
+raftery.diag(FullModel_inf,q=0.5,r=0.05,s=0.95,converge.eps=0.001)
+----------EXAMPLE 6.3: MODEL COMPARISON----------------##
+#
+# Model Comparison: Background variables only#
+#
+BGModel_inf <- MCMCregress(RCOMB1~GENDER+NATIVE+ SLANG+ ESCS#
+       ,data=datafile9,marginal.likelihood="Chib95",mcmc=10000,#
+	b0=c(470.9, 26.3, 4.7, 23.3, 39.9 ),#
+	B0=c( 0.0185, 0.0952, 0.0151, 0.0222, 0.3541 ))#
+plot(BGModel_inf)#
+dev.off()#
+summary(BGModel_inf)#
+#
+# Model Comparison: Attitudinal variables only#
+#
+ATTModel_inf <- MCMCregress(rcomb1~JOYREAD+ DIVREAD,#
+	data=datafile9,marginal.likelihood="Chib95",mcmc=10000,#
+	b0=c( 505.4, 27.2, 8.4 ),B0=c(0.3643, 0.3147, 0.3497))#
+plot(ATTModel_inf)#
+dev.off()#
+summary(ATTModel_inf)#
+#
+# Model Comparison: Learning strategies variables only#
+#
+LSModel_inf <- MCMCregress(rcomb1~ MEMOR+ ELAB+ CSTRAT,#
+	data=datafile9,marginal.likelihood="Chib95",mcmc=10000,#
+	b0=c( 509.7, -24.2, -9.8, 38.9),B0=c( 0.3327, 0.1829, 0.1848, 0.1563))#
+plot(LSModel_inf)#
+dev.off()#
+summary(LSModel_inf)#
+#
+# Calculation of Bayes Factors#
+#
+bf <- BayesFactor(BGModel_inf, ATTModel_inf, LSModel_inf, FullModel_inf)#
+print(bf)
+----------EXAMPLE 6.3: MODEL COMPARISON----------------##
+#
+# Model Comparison: Background variables only#
+#
+BGModel_inf <- MCMCregress(rcomb1~gender+native+ slang+ ESCS#
+       ,data=datafile9,marginal.likelihood="Chib95",mcmc=10000,#
+	b0=c(470.9, 26.3, 4.7, 23.3, 39.9 ),#
+	B0=c( 0.0185, 0.0952, 0.0151, 0.0222, 0.3541 ))#
+plot(BGModel_inf)#
+dev.off()#
+summary(BGModel_inf)#
+#
+# Model Comparison: Attitudinal variables only#
+#
+ATTModel_inf <- MCMCregress(rcomb1~JOYREAD+ DIVREAD,#
+	data=datafile9,marginal.likelihood="Chib95",mcmc=10000,#
+	b0=c( 505.4, 27.2, 8.4 ),B0=c(0.3643, 0.3147, 0.3497))#
+plot(ATTModel_inf)#
+dev.off()#
+summary(ATTModel_inf)#
+#
+# Model Comparison: Learning strategies variables only#
+#
+LSModel_inf <- MCMCregress(rcomb1~ MEMOR+ ELAB+ CSTRAT,#
+	data=datafile9,marginal.likelihood="Chib95",mcmc=10000,#
+	b0=c( 509.7, -24.2, -9.8, 38.9),B0=c( 0.3327, 0.1829, 0.1848, 0.1563))#
+plot(LSModel_inf)#
+dev.off()#
+summary(LSModel_inf)#
+#
+# Calculation of Bayes Factors#
+#
+bf <- BayesFactor(BGModel_inf, ATTModel_inf, LSModel_inf, FullModel_inf)#
+print(bf)
+---------EXAMPLE 6.4: BAYESIAN MODEL AVERAGING-------------##
+#
+attach(datafile9)#
+bma=bicreg(cbind(gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT),rcomb1,strict=FALSE,OR=20)#
+summary(bma)#
+plot(bma,include.intercept=FALSE)
+attach(datafile9)
+datafile <- read.csv(file.choose(),header=T)#
+datafile9 <- subset(datafile, select=c(rcomb1, gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT))#
+bma=bicreg(cbind(gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT),rcomb1,strict=FALSE,OR=20)#
+summary(bma)#
+plot(bma,include.intercept=FALSE)
+install.packages("BMA")#
+require(BMA)#
+datafile <- read.csv(file.choose(),header=T)#
+datafile9 <- subset(datafile, select=c(rcomb1, gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT))#
+bma=bicreg(cbind(gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT),rcomb1,strict=FALSE,OR=20)#
+summary(bma)#
+plot(bma,include.intercept=FALSE)
+bma <- bicreg(cbind(gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT),rcomb1,strict=FALSE,OR=20)
+head(datafile9)
+bma <- bicreg(cbind(gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT),rcomb1,strict=FALSE,OR=20)
+attach(datafile9)#
+bma <- bicreg(cbind(gender, native,  slang,  ESCS,#
+       JOYREAD, DIVREAD, MEMOR, ELAB, CSTRAT),rcomb1,strict=FALSE,OR=20)#
+summary(bma)#
+plot(bma,include.intercept=FALSE)
+------------- EXAMPLE 6.5 BAYESIAN LOGISTIC REGRESSION---------##
+#
+install.packages("MCMCpack")#
+install.packages("BMA")#
+#
+#Multiple Regression Analysis :#
+library(MCMCpack)#
+datafile <- read.csv(file.choose(),header=T)#
+datafile9 <- subset (datafile, select=c(private, gender, native, slang, ESCS))#
+#
+head(datafile9)#
+nrow(datafile9)#
+datafile9<-na.omit(datafile9)#
+nrow(datafile9)#
+#
+#FullModel#
+FullModel <- MCMClogit(private~gender+ native+  slang+  ESCS#
+       ,data=datafile5,marginal.likelihood="Laplace",mcmc=100000,b0=0,#
+	B0=(.01))#
+plot(FullModel) # Produces the convergence plots and the posterior densities#
+dev.off()#
+summary(FullModel)#
+#
+FullModel_inf <- MCMClogit(private~gender+ native+  slang+  ESCS#
+	,data=datafile5,marginal.likelihood="Laplace",mcmc=100000,#
+	b0=c(-3.4118, 0.2513,  0.6171,  -0.3057, 0.2446 ),#
+	B0=c( 3.454347, 27.272662, 3.018396, 6.184967, 93.873638))#
+plot(FullModel_inf) # Produces the convergence plots and the posterior densities#
+dev.off()#
+summary(FullModel_inf)#
+#
+#Convergence Diagnostics#
+library(coda)#
+geweke.diag(FullModel_inf, frac1=0.1, frac2=0.5)  #
+heidel.diag(FullModel_inf,eps=0.1,pvalue=0.05) #
+raftery.diag(FullModel_inf,q=0.5,r=0.05,s=0.95,converge.eps=0.001) #
+#
+geweke.diag(FullModel_inf, frac1=0.1, frac2=0.5) #
+heidel.diag(FullModel_inf,eps=0.1,pvalue=0.05) #
+raftery.diag(FullModel_inf,q=0.5,r=0.05,s=0.95,converge.eps=0.001) #
+#
+#Bayesian Model Averaging#
+library(BMA)#
+attach(datafile5)#
+bma=bic.glm(cbind(gender, native,  slang,  ESCS),private,#
+glm.family=binomial("logit"), strict=FALSE,OR=20)#
+summary(bma)#
+plot(bma) # Plots of BMA posterior distributions#
+imageplot.bma(bma) # The image plot shows which predictors are included in each model
+Multiple Regression Analysis :#
+library(MCMCpack)#
+datafile <- read.csv(file.choose(),header=T)#
+datafile9 <- subset (datafile, select=c(private, gender, native, slang, ESCS))#
+#
+head(datafile9)#
+nrow(datafile9)#
+datafile9<-na.omit(datafile9)#
+nrow(datafile9)#
+#
+#FullModel#
+FullModel <- MCMClogit(private~gender+ native+  slang+  ESCS#
+       ,data=datafile9,marginal.likelihood="Laplace",mcmc=100000,b0=0,#
+	B0=(.01))#
+plot(FullModel) # Produces the convergence plots and the posterior densities#
+dev.off()#
+summary(FullModel)#
+#
+FullModel_inf <- MCMClogit(private~gender+ native+  slang+  ESCS#
+	,data=datafile9,marginal.likelihood="Laplace",mcmc=100000,#
+	b0=c(-3.4118, 0.2513,  0.6171,  -0.3057, 0.2446 ),#
+	B0=c( 3.454347, 27.272662, 3.018396, 6.184967, 93.873638))#
+plot(FullModel_inf) # Produces the convergence plots and the posterior densities#
+dev.off()#
+summary(FullModel_inf)#
+#
+#Convergence Diagnostics#
+library(coda)#
+geweke.diag(FullModel_inf, frac1=0.1, frac2=0.5)  #
+heidel.diag(FullModel_inf,eps=0.1,pvalue=0.05) #
+raftery.diag(FullModel_inf,q=0.5,r=0.05,s=0.95,converge.eps=0.001) #
+#
+geweke.diag(FullModel_inf, frac1=0.1, frac2=0.5) #
+heidel.diag(FullModel_inf,eps=0.1,pvalue=0.05) #
+raftery.diag(FullModel_inf,q=0.5,r=0.05,s=0.95,converge.eps=0.001) #
+#
+#Bayesian Model Averaging#
+library(BMA)#
+attach(datafile9)#
+bma=bic.glm(cbind(gender, native,  slang,  ESCS),private,#
+glm.family=binomial("logit"), strict=FALSE,OR=20)#
+summary(bma)#
+plot(bma) # Plots of BMA posterior distributions#
+imageplot.bma(bma) # The image plot shows which predictors are included in each model
+------------------------POSTERIOR PREDICTIVE CHECK ----------------------------------##
+#
+library(gridExtra)#
+library(coda)#
+require(MCMCpack)#
+#
+#set.seed(515)#
+###These grab the data from the MCMC object#
+beta.df <- data.frame(as.matrix(FullModel_inf))#
+beta.mat <- as.matrix(beta.df[sample(8000:10000,1000),])?beta.non.df <- data.frame(as.matrix(FullModel))#
+beta.non.mat <- as.matrix(beta.non.df[sample(8000:10000,1000),])#
+#
+ppc <- function(x, df1) {#
+#
+obs <- as.matrix(cbind(Intercept = 1,datafile9[,2:10])) ## Independent variables in regression model#
+betas <- as.matrix(df1[x,1:10]) ## betas drawn from the posterior distribution#
+y.rep.ev <- obs %*% betas       ## expected value y#
+y.rep.var <- df1[x,11] ## variance of y#
+#
+#print(c(y.rep.ev,y.rep.var))#
+y.rep <- obs %*% betas + rnorm(nrow(datafile9),0,sqrt(df1[x,11])) ## replicated data#
+val1 <- ((y.rep - y.rep.ev)^2)/y.rep.var ##y.rep chi.square ## Replicated Chi Square Statistic#
+val2 <- ((datafile9$rcomb1 - y.rep.ev)^2)/y.rep.var ## Observed Chi Square Statistic#
+return(list(y.rep,c(chi.rep = sum(val1),chi.obs = sum(val2))))#
+#
+}##END function ppc#
+#
+## SIMULATED THE REPLICATED DATA AND OBTAIN THE DISCREPANCY STATISTIC#
+ppc.data <- lapply(1:1000,ppc, df1 = beta.mat)#
+ppc.non.data <- lapply(1:1000,ppc, df1 = beta.non.mat)#
+posterior.check <- t(sapply(ppc.data, function(x) return(x[[2]])))#
+posterior.non.check <- t(sapply(ppc.non.data, function(x) return(x[[2]])))#
+chi.obs <- posterior.non.check[,2]#
+chi.rep <- posterior.non.check[,1]#
+chi.discrepancy <- posterior.non.check[,2] - posterior.non.check[,1] ##get the difference between y.obs and y.rep#
+p.value <- round(length(which(chi.discrepancy < 0))/length(chi.discrepancy),3)#
+range <- max(chi.discrepancy) - min(chi.discrepancy) ##range#
+#
+##SAVE PDF POSTERIOR CHECKING PLOTS#
+liks.dif <- chi.obs - chi.rep#
+range <- max(liks.dif) - min(liks.dif)#
+p.value <- round(length(which(liks.dif < 0))/length(liks.dif),3)#
+pdf(file=' ') #####ADD FILE PATH#######
+par(ask = FALSE)#
+hist(liks.dif, xlab = expression(Chi["obs"]^2 - Chi["rep"]^2), main = "")#
+abline(v = 0, lty = 2, lwd = 2)#
+text(x = min(liks.dif) + range/5, y = 200, label = paste("p-value = ",p.value,sep = ""))#
+dev.off()#
+pdf(file=' ') #####ADD FILE PATH#######
+qplot(chi.obs,chi.rep, shape = I(1)) + #
+geom_abline(slope = 1, intercept = 0) +#
+theme_bw() +#
+geom_text(aes(x = 65 + min(chi.obs,chi.rep) , y = - 2 + max(chi.obs,chi.rep), label = paste("p-value =",p.value)), size = 4.5) +#
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +#
+ylim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) + #
+xlim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) +#
+xlab("Observed") + ylab("Replicated")#
+dev.off()#
+#
+##DISPLAY POSTERIOR CHECKING PLOTS & INFORMATION#
+hist(liks.dif, xlab = expression(Chi["obs"]^2 - Chi["rep"]^2), main = "")#
+abline(v = 0, lty = 2, lwd = 2)#
+text(x = min(liks.dif) + range/5, y = 200, label = paste("p-value = ",p.value,sep = ""))#
+par(ask = TRUE)#
+qplot(chi.obs,chi.rep, shape = I(1)) + #
+geom_abline(slope = 1, intercept = 0) +#
+theme_bw() +#
+geom_text(aes(x = 65 + min(chi.obs,chi.rep) , y = - 2 + max(chi.obs,chi.rep), label = paste("p-value =",p.value)), size = 4.5) +#
+#theme(panel.grid.major = element_blank()) +#
+ylim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) + #
+xlim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) +#
+xlab("Observed") + ylab("Replicated")#
+#
+####
+pdf(file=' ') #####ADD FILE PATH#######
+hist(FullModel_inf[,11], main = "Histogram of posterior draws for Sigma", xlab = "Sigma")#
+dev.off()
+------------------------POSTERIOR PREDICTIVE CHECK ----------------------------------##
+#
+library(gridExtra)#
+library(coda)#
+require(MCMCpack)#
+#
+#set.seed(515)#
+###These grab the data from the MCMC object#
+beta.df <- data.frame(as.matrix(FullModel_inf))#
+beta.mat <- as.matrix(beta.df[sample(8000:10000,1000),])?beta.non.df <- data.frame(as.matrix(FullModel))#
+beta.non.mat <- as.matrix(beta.non.df[sample(8000:10000,1000),])#
+#
+ppc <- function(x, df1) {#
+#
+obs <- as.matrix(cbind(Intercept = 1,datafile9[,2:10])) ## Independent variables in regression model#
+betas <- as.matrix(df1[x,1:10]) ## betas drawn from the posterior distribution#
+y.rep.ev <- obs %*% betas       ## expected value y#
+y.rep.var <- df1[x,11] ## variance of y#
+#
+#print(c(y.rep.ev,y.rep.var))#
+y.rep <- obs %*% betas + rnorm(nrow(datafile9),0,sqrt(df1[x,11])) ## replicated data#
+val1 <- ((y.rep - y.rep.ev)^2)/y.rep.var ##y.rep chi.square ## Replicated Chi Square Statistic#
+val2 <- ((datafile9$rcomb1 - y.rep.ev)^2)/y.rep.var ## Observed Chi Square Statistic#
+return(list(y.rep,c(chi.rep = sum(val1),chi.obs = sum(val2))))#
+#
+}##END function ppc#
+#
+## SIMULATED THE REPLICATED DATA AND OBTAIN THE DISCREPANCY STATISTIC#
+ppc.data <- lapply(1:1000,ppc, df1 = beta.mat)#
+ppc.non.data <- lapply(1:1000,ppc, df1 = beta.non.mat)#
+posterior.check <- t(sapply(ppc.data, function(x) return(x[[2]])))#
+posterior.non.check <- t(sapply(ppc.non.data, function(x) return(x[[2]])))#
+chi.obs <- posterior.non.check[,2]#
+chi.rep <- posterior.non.check[,1]#
+chi.discrepancy <- posterior.non.check[,2] - posterior.non.check[,1] ##get the difference between y.obs and y.rep#
+p.value <- round(length(which(chi.discrepancy < 0))/length(chi.discrepancy),3)#
+range <- max(chi.discrepancy) - min(chi.discrepancy) ##range#
+#
+##SAVE PDF POSTERIOR CHECKING PLOTS#
+liks.dif <- chi.obs - chi.rep#
+range <- max(liks.dif) - min(liks.dif)#
+p.value <- round(length(which(liks.dif < 0))/length(liks.dif),3)#
+pdf(file=' ') #####ADD FILE PATH#######
+par(ask = FALSE)#
+hist(liks.dif, xlab = expression(Chi["obs"]^2 - Chi["rep"]^2), main = "")#
+abline(v = 0, lty = 2, lwd = 2)#
+text(x = min(liks.dif) + range/5, y = 200, label = paste("p-value = ",p.value,sep = ""))#
+dev.off()#
+pdf(file=' ') #####ADD FILE PATH#######
+qplot(chi.obs,chi.rep, shape = I(1)) + #
+geom_abline(slope = 1, intercept = 0) +#
+theme_bw() +#
+geom_text(aes(x = 65 + min(chi.obs,chi.rep) , y = - 2 + max(chi.obs,chi.rep), label = paste("p-value =",p.value)), size = 4.5) +#
+theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +#
+ylim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) + #
+xlim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) +#
+xlab("Observed") + ylab("Replicated")#
+#dev.off()#
+#
+##DISPLAY POSTERIOR CHECKING PLOTS & INFORMATION#
+hist(liks.dif, xlab = expression(Chi["obs"]^2 - Chi["rep"]^2), main = "")#
+abline(v = 0, lty = 2, lwd = 2)#
+text(x = min(liks.dif) + range/5, y = 200, label = paste("p-value = ",p.value,sep = ""))#
+par(ask = TRUE)#
+qplot(chi.obs,chi.rep, shape = I(1)) + #
+geom_abline(slope = 1, intercept = 0) +#
+theme_bw() +#
+geom_text(aes(x = 65 + min(chi.obs,chi.rep) , y = - 2 + max(chi.obs,chi.rep), label = paste("p-value =",p.value)), size = 4.5) +#
+#theme(panel.grid.major = element_blank()) +#
+ylim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) + #
+xlim(c(-7 + min(chi.obs,chi.rep),max(chi.obs,chi.rep))) +#
+xlab("Observed") + ylab("Replicated")#
+#
+####
+pdf(file=' ') #####ADD FILE PATH#######
+hist(FullModel_inf[,11], main = "Histogram of posterior draws for Sigma", xlab = "Sigma")#
+#dev.off()
