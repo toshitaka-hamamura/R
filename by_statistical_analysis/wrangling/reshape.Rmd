@@ -1,0 +1,33 @@
+---
+title: "reshape"
+author: "Toshitaka Hamamura"
+date: "2022-07-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Reshape
+```{r reshape}
+summary(cars)
+```
+
+### my example
+```
+reshape(data = rcads_p,
+direction = "long",
+varying = c("rcads1_p", "rcads2_p", "rcads3_p"),
+times = c("rcads1_p", "rcads2_p", "rcads3_p"),
+v.names = "score",
+timevar = "var",
+idvar = "id"
+)
+```
+
+### memo
+- x needs to be in the alphabetical order but include non-varying and varying
+- varying needs to be in order of v.names and alphabetical
+- varying nees to be entered by time
+- Include other variables in x

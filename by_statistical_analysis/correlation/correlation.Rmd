@@ -1,0 +1,30 @@
+---
+title: "correlation"
+author: "Toshitaka Hamamura"
+date: "2022-07-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Basics
+### Codes
+```
+cor()
+cor.test()
+rcorr()
+```
+- Field, 2012,p216
+- Field, 2012,p216
+
+### Examples
+```{r cars}
+## Correlation Matrix of Multivariate sample:
+(Cl <- cor(longley))
+## Graphical Correlation Matrix:
+symnum(Cl) # highly correlated
+symnum(clS <- cor(longley, method = "spearman"))
+```
+
